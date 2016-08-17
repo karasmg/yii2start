@@ -3,7 +3,9 @@
  * Controller is the customized base controller class.
  * All controller classes for this application should extend from this base class.
  */
-class Controller extends CController
+
+use yii\base\Controller;
+class ControllerC extends Controller
 {
 	/**
 	 * @var string the default layout for the controller view. Defaults to '//layouts/column1',
@@ -171,12 +173,13 @@ class Controller extends CController
 		);
 	}	
 	
-	protected function beforeAction($action) {
+	public function beforeAction($action) {
 		ServiceHelper::addTriggerLog( $this->getRoute() );
 		return parent::beforeAction($action);
 	}
 	
-	public function afterAction($action) {
+	public function afterAction($action, $result) {
+		$result = parent::afterAction($action, $result);
 		$message = "\nController: ".Yii::app()->controller->id."\n";
 		$message.= "Action: ".Yii::app()->controller->action->id."\n\n\n\n";
 		
@@ -200,6 +203,6 @@ class Controller extends CController
 		$message.=$data['message'];
 		if ( ($data['memory'] > 1048576*5 || $data['time'] > 1.5) && Yii::app()->controller->id != 'adminPayment' )
 			Yii::log($message, "findtrace", "actionShowrequests");
-		return parent::afterAction($action);
+		return $result;
 	}
 }

@@ -1,6 +1,7 @@
 <?php
-use app\components\Controller as Controller;
-class SiteController extends Controller {
+use app\components\ControllerC;
+
+class SiteController extends ControllerC {
 	/**
 	 * Declares class-based actions.
 	 */
