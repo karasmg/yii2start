@@ -1,0 +1,2 @@
+<p><b><?= Yii::t('site', 'Dear customer!') ?></b></p>
+<p><?= Yii::t('site', 'Follow on') ?> <a href="<?= Yii::app()->request->hostInfo?>/ua/personalpage/loan/paymentconfirmation?utm_source=zayavkaonedit&utm_medium=email&utm_campaign=internal" target="_blank"><?= Yii::t('site', 'by link') ?></a>, <?= Yii::t('site', 'find out and confirm you have agreed to the amount and terms of the loan.') ?></p>

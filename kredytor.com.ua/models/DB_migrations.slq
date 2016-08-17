@@ -1,0 +1,30 @@
+-- Добавляем параметры для счет фактур
+ALTER TABLE `zayavka_invoice` 
+ADD `shop_name` VARCHAR(300) NULL DEFAULT NULL COMMENT 'Название магазина' AFTER `reason_annulate`, 
+ADD `shop_addr` VARCHAR(300) NULL DEFAULT NULL COMMENT 'Адрес, url или физический' AFTER `shop_name`, 
+ADD `income_ip` VARCHAR(20) NULL DEFAULT NULL COMMENT 'ip откуда пришел инвойс' AFTER `shop_addr`;
+
+ALTER TABLE `zayavka_invoice_prods` 
+ADD `prod_type` VARCHAR(30) NULL DEFAULT NULL COMMENT 'тип товара' AFTER `prod_cred_summ`, 
+ADD INDEX `prod_type` (`prod_type`);
+
+--доп. параметры при логгировании запросов\
+ALTER TABLE `request_log` 
+ADD `request_user` VARCHAR(100) NULL DEFAULT NULL COMMENT 'Логин от кого пришел запрос' , 
+ADD `request_ip` VARCHAR(20) NULL DEFAULT NULL COMMENT 'ip от кого пришел запрос' , 
+ADD `response_time` DATETIME NULL DEFAULT NULL COMMENT 'дата/время ответа на запрос' ;
+
+--
+-- Новая таблица `state_log`
+--
+
+CREATE TABLE IF NOT EXISTS `state_log` (
+  `s_id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
+  `s_zid` int(11) unsigned DEFAULT NULL,
+  `s_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `s_state` int(2) unsigned DEFAULT NULL,
+  `s_action` varchar(50) DEFAULT NULL COMMENT 'Имя метода',
+  `s_controller` varchar(50) DEFAULT NULL COMMENT 'Имя контроллера',
+  `s_comment` text,
+  PRIMARY KEY (`s_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Лог прогресса оформления заявки' AUTO_INCREMENT=1 ;

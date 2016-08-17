@@ -1,0 +1,1 @@
+<input type="hidden" value="<?php echo $fld['val'];?>" name="<?php echo $this->_nameSpace.'['.$name.']';?>" id="<?php echo $this->_nameSpace.'_'.$name;?>"<?php if (!empty($fld['error'])) echo ' class="error"';?> />

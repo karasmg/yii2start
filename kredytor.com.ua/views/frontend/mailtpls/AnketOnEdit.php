@@ -1,0 +1,1 @@
+<p><?= Yii::t('site', 'Dear customer, check that the (correct) information you entered in the questionnaire online') ?> <a href="<?= Yii::app()->request->hostInfo?>/ua/anketa?utm_source=anketaonedit&utm_medium=email&utm_campaign=internal" target="_blank"><?= Yii::app()->request->hostInfo?>/ua/anketa</a></p>

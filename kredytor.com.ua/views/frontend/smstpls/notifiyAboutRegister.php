@@ -1,0 +1,1 @@
+<?= Yii::t('site', 'Enter personal cabinet:') ?> <?= Yii::t('site', 'Login:') ?> "<?=$login;?>" <?= Yii::t('site', 'Password:') ?> "<?=$password;?>"

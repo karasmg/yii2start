@@ -1,0 +1,1 @@
+<?= Yii::t('site', 'Check the data in the questionnaire online') ?> <?= Yii::app()->request->hostInfo?>/ua/anketa

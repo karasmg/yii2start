@@ -1,0 +1,1 @@
+<?= Yii::t('site', 'We remind you') ?>  <?= $period ?> <?=$finish_date;?> <?= Yii::t('site', 'payment date for loan contract') ?> <?=$dog_number;?>

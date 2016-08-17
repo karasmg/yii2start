@@ -1,0 +1,28 @@
+﻿<?php
+return array(
+	'January'	=> 'Січня',
+	'February'	=> 'Лютого',
+	'March'		=> 'Березня',
+	'April'		=> 'Квітня',
+	'May'		=> 'Травня',
+	'June'		=> 'Червня',
+	'July'		=> 'Липня',
+	'August'	=> 'Серпня',
+	'September'	=> 'Вересня',
+	'October'	=> 'Жовтня',
+	'November'	=> 'Листопада',
+	'December'	=> 'Грудня',
+	'January_sm'=> 'січень',
+	'February_sm'=> 'лютий',
+	'March_sm'	=> 'березень',
+	'April_sm'	=> 'квітень',
+	'May_sm'	=> 'травень',
+	'June_sm'	=> 'червень',
+	'July_sm'	=> 'липень',
+	'August_sm'	=> 'серпень',
+	'September_sm'=> 'вересень',
+	'October_sm'=> 'жовтень',
+	'November_sm'=> 'листопад',
+	'December_sm'=> 'грудень',
+);
+?>
