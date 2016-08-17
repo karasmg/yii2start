@@ -1,5 +1,13 @@
 <?php
+
+namespace app\controllers;
+
+use Yii;
 use app\components\ControllerC;
+use app\models\helpers\Url_works;
+
+
+
 
 class SiteController extends ControllerC {
 	/**
@@ -16,9 +24,11 @@ class SiteController extends ControllerC {
 
 	public function init() {
 		$this->_helper = new Url_works ();
-		$this->layout_path = Yii::app ()->params['layout_site_path'];
+		$this->layout_path = Yii::$app->params['layout_site_path'];
 		$this->layout = '//' . $this->layout_path . '/content';
-		$this->isMenuDisabled = Yii::app()->user->isMenuDisabled;
+		var_dump(Yii::$app->user);
+		exit(0);
+		$this->isMenuDisabled = Yii::$app->user->isMenuDisabled;
 		$this->checkPassChange();
 		parent::init ();
 		if ( ! empty ( $_REQUEST['ajax_request'] ) ) {
@@ -26,25 +36,25 @@ class SiteController extends ControllerC {
 		}
 	}
 
-	protected function beforeAction($action) {
+	public function beforeAction($action) {
 		$this->check_mobile_redirect();
 		return parent::beforeAction($action);
 	}
 
 	public function render($view, $data = null, $return = false) {
 		$view = explode ( '/', $view );
-		$view[(count ( $view ) - 1)] = Yii::app ()->params['mobile_sub_categ'] . $view[(count ( $view ) - 1)];
+		$view[(count ( $view ) - 1)] = Yii::$app->params['mobile_sub_categ'] . $view[(count ( $view ) - 1)];
 		$view = implode ( '/', $view );
-		Yii::app ()->params['breadcrumbs'] = $this->breadcrumbs;
+		Yii::$app->params['breadcrumbs'] = $this->breadcrumbs;
 		return parent::render ( $view, $data, $return );
 	}
 
 	private function check_mobile_redirect() {
-		$check_position = '/' . str_replace ( '/', '', Yii::app ()->params['mobile_sub_categ'] );
+		$check_position = '/' . str_replace ( '/', '', Yii::$app->params['mobile_sub_categ'] );
 		if ( $this->getId () == 'site' && $this->getAction ()
-			->getId () == 'index' && Yii::app ()->params['mobile_sub_categ'] && strpos ( $_SERVER['REQUEST_URI'], $check_position ) !== 0 ) {
+			->getId () == 'index' && Yii::$app->params['mobile_sub_categ'] && strpos ( $_SERVER['REQUEST_URI'], $check_position ) !== 0 ) {
 			$this->redirect ( $this->createUrl ( '/' ), true, 301 );
-			Yii::app ()->end ();
+			Yii::$app->end ();
 		}
 	}
 
@@ -57,7 +67,7 @@ class SiteController extends ControllerC {
 						'foreColor' => 0x575757, 
 						'height' => 50, 
 						'width' => 132, 
-						'fontFile' => Yii::app ()->basePath . DIRECTORY_SEPARATOR . 'extensions' . DIRECTORY_SEPARATOR . 'fonts' . DIRECTORY_SEPARATOR . 'tahoma.ttf', 
+						'fontFile' => Yii::$app->basePath . DIRECTORY_SEPARATOR . 'extensions' . DIRECTORY_SEPARATOR . 'fonts' . DIRECTORY_SEPARATOR . 'tahoma.ttf', 
 						'minLength' => 2, 
 						'maxLength' => 4 ), 
 				// page action renders "static" pages stored under 'protected/views/site/pages'
@@ -67,13 +77,13 @@ class SiteController extends ControllerC {
 
 	
 	public function checkPassChange() {		
-		if(Yii::app ()->user->isGuest) {
+		if(Yii::$app->user->isGuest) {
 			return false;
 		}
-		if(stripos (Yii::app ()->request->url, 'changepassword/pass/needtochange')) 
+		if(stripos (Yii::$app->request->url, 'changepassword/pass/needtochange')) 
 			return;
-		if( !empty(Yii::app()->user->passneedchange) ) {
-			$this->redirect (array ($this->createURL(Yii::app()->language.'/'.'isregistered/changepassword'), 'pass' => 'needtochange'));
+		if( !empty(Yii::$app->user->passneedchange) ) {
+			$this->redirect (array ($this->createURL(Yii::$app->language.'/'.'isregistered/changepassword'), 'pass' => 'needtochange'));
 			return true;
 		} else
 			return false;
@@ -82,7 +92,7 @@ class SiteController extends ControllerC {
 	
 	public function actionRedirect()
 	{
-		$_af = '/'.Yii::app ()->language.Yii::app()->request->url;
+		$_af = '/'.Yii::$app->language.Yii::$app->request->url;
 		$this->redirect( $_af );
 	}
 
@@ -93,7 +103,7 @@ class SiteController extends ControllerC {
 	 */
 	public function actionIndex() {
 		$this->layout = '//' . $this->layout_path . '/main';
-		$article_data = ContentArticles::model ()->with ( array ('lang_data' => array ('joinType' => 'LEFT JOIN', 'condition' => 'cal_lang = "' . Yii::app ()->language . '"' ) ) )
+		$article_data = ContentArticles::model ()->with ( array ('lang_data' => array ('joinType' => 'LEFT JOIN', 'condition' => 'cal_lang = "' . Yii::$app->language . '"' ) ) )
 			->find ( 'ca_id=:ca_id AND ca_active = 1', array (':ca_id' => 1 ) );
 		$article_data = $this->compile_article ( $article_data );
 		
@@ -103,10 +113,10 @@ class SiteController extends ControllerC {
 		$criteria->order = 'n_active_date DESC, n_id DESC';
 		$criteria->condition = 'n_active=1 AND ( n_active_date <= NOW() OR n_active_date IS NULL ) AND n_cat_id=2';
 		
-		$news = News::model ()->with ( array ('lang_data' => array ('joinType' => 'LEFT JOIN', 'condition' => 'nl_lang = "' . Yii::app ()->language . '"' ) ) )
+		$news = News::model ()->with ( array ('lang_data' => array ('joinType' => 'LEFT JOIN', 'condition' => 'nl_lang = "' . Yii::$app->language . '"' ) ) )
 			->find ( $criteria );
 		
-		$about_us = ContentArticles::model ()->with ( array ('lang_data' => array ('joinType' => 'LEFT JOIN', 'condition' => 'cal_lang = "' . Yii::app ()->language . '"' ) ) )
+		$about_us = ContentArticles::model ()->with ( array ('lang_data' => array ('joinType' => 'LEFT JOIN', 'condition' => 'cal_lang = "' . Yii::$app->language . '"' ) ) )
 			->find ( 'ca_id=:ca_id AND ca_active = 1', array (':ca_id' => 3 ) );
 		
 		$criteria = new CDbCriteria ();
@@ -132,8 +142,8 @@ class SiteController extends ControllerC {
 	}
 
 	public function actionRegistration() {
-		if ( !Yii::app ()->user->isGuest && !IframeHelper::camedFromIframe() ) {
-			$this->redirect('/'.Yii::app()->language.'/personalpage/loan/creditstatus/');
+		if ( !Yii::$app->user->isGuest && !IframeHelper::camedFromIframe() ) {
+			$this->redirect('/'.Yii::$app->language.'/personalpage/loan/creditstatus/');
 		}
 		
 		$isGuest = true;
@@ -158,7 +168,7 @@ class SiteController extends ControllerC {
 			$sessionId = session_id();
 			if ( $login->validate () && $login->login () ) {
 				TempZayavkaHelper::updateByUserId($sessionId);
-				$this->redirect ( '/' . Yii::app ()->language . '/personalpage/' );
+				$this->redirect ( '/' . Yii::$app->language . '/personalpage/' );
 				return;
 			}
 		}
@@ -172,9 +182,9 @@ class SiteController extends ControllerC {
 	 * Displays the login page
 	 */
 	public function actionLogin($h2Message=false) {
-		if ( !Yii::app ()->user->isGuest && !$h2Message ) {
+		if ( !Yii::$app->user->isGuest && !$h2Message ) {
             $_SESSION['_states'] = false;
-			$this->redirect('/'.Yii::app()->language.'/personalpage/loan/creditstatus/');
+			$this->redirect('/'.Yii::$app->language.'/personalpage/loan/creditstatus/');
 		}
 		if(!$h2Message) $h2Message = 'login to continue';
 		
@@ -186,12 +196,12 @@ class SiteController extends ControllerC {
 			if ( $model->validate() && $model->login() ) {
 
 				TempZayavkaHelper::updateByUserId($sessionId);
-				if(!empty(Yii::app()->request->cookies['redirect_cookie'])) {
-					$redirect_cookie = Yii::app()->request->cookies['redirect_cookie']->value;
-					unset(Yii::app()->request->cookies['redirect_cookie']);
+				if(!empty(Yii::$app->request->cookies['redirect_cookie'])) {
+					$redirect_cookie = Yii::$app->request->cookies['redirect_cookie']->value;
+					unset(Yii::$app->request->cookies['redirect_cookie']);
 					$this->redirect ($redirect_cookie);
 				} else
-					$this->redirect ('/'.Yii::app()->language.'/personalpage/');
+					$this->redirect ('/'.Yii::$app->language.'/personalpage/');
 				return;
 			}
 		}
@@ -202,8 +212,8 @@ class SiteController extends ControllerC {
 	}
 	
 	public function actionPassrecovery() {
-		if ( !Yii::app()->user->isGuest )
-			$this->redirect('/'.Yii::app()->language.'/personalpage/loan/creditstatus/');
+		if ( !Yii::$app->user->isGuest )
+			$this->redirect('/'.Yii::$app->language.'/personalpage/loan/creditstatus/');
 		$this->breadcrumbs[] = Yii::t ( 'site', 'password recovery' );
 		
 		if ( isset($_GET['token']) && !is_null($_GET['token']) ) {
@@ -244,7 +254,7 @@ class SiteController extends ControllerC {
 			$_alias = $key;
 			break;
 		}
-		$article_data = ContentCategs::model ()->with ( array ('lang_data' => array ('joinType' => 'LEFT JOIN', 'condition' => 'ccl_lang = "' . Yii::app ()->language . '"' ) ) )
+		$article_data = ContentCategs::model ()->with ( array ('lang_data' => array ('joinType' => 'LEFT JOIN', 'condition' => 'ccl_lang = "' . Yii::$app->language . '"' ) ) )
 			->find ( 'cc_alias=:cc_alias AND cc_active = 1', array (':cc_alias' => $_alias ) );
 		
 		if ( $article_data === NULL )
@@ -255,7 +265,7 @@ class SiteController extends ControllerC {
 		$criteria->order = 'ca_id DESC';
 		$criteria->condition = 'ca_active=1 AND ca_cat_id =' . ( int ) $article_data['cc_id'];
 		
-		$items = ContentArticles::model ()->with ( array ('lang_data' => array ('joinType' => 'LEFT JOIN', 'condition' => 'cal_lang = "' . Yii::app ()->language . '"' ) ) )
+		$items = ContentArticles::model ()->with ( array ('lang_data' => array ('joinType' => 'LEFT JOIN', 'condition' => 'cal_lang = "' . Yii::$app->language . '"' ) ) )
 			->findAll ( $criteria );
 		
 		$items = $this->compile_items ( $items, 'lang_data', array ('ca_alias', 'cal_title', 'cal_text' ) );
@@ -269,7 +279,7 @@ class SiteController extends ControllerC {
 	}
 
 	public function actionArticle($_alias) {
-		$article_data = ContentArticles::model ()->with ( array ('lang_data' => array ('joinType' => 'LEFT JOIN', 'condition' => 'cal_lang = "' . Yii::app ()->language . '"' ) ) )
+		$article_data = ContentArticles::model ()->with ( array ('lang_data' => array ('joinType' => 'LEFT JOIN', 'condition' => 'cal_lang = "' . Yii::$app->language . '"' ) ) )
 			->find ( 'ca_alias=:ca_alias AND ca_active = 1', array (':ca_alias' => $_alias ) );
 		
 		if ( $article_data === NULL )
@@ -330,7 +340,7 @@ class SiteController extends ControllerC {
 		$alias_data = explode ( '-', $alias, 2 );
 		if ( (! is_array ( $alias_data ) || (is_array ( $alias_data ) && count ( $alias_data ) < 2)) && $finish_on_error ) {
 			throw new CHttpException ( 404, 'неверный запрос' );
-			Yii::app ()->end ();
+			Yii::$app->end ();
 		}
 		return $alias_data;
 	}
@@ -340,14 +350,14 @@ class SiteController extends ControllerC {
 		if ( isset ( $alias_data[1] ) ) {
 			if ( $alias_data[1] !== $get_alias ) {
 				$redir_params = $this->id . '/' . $this->action->id;
-				Yii::app ()->request->redirect ( $this->createUrl ( $redir_params, array ('_alias' => $article_alias ) ), true, 301 );
+				Yii::$app->request->redirect ( $this->createUrl ( $redir_params, array ('_alias' => $article_alias ) ), true, 301 );
 			}
 		}
 	}
 
 	public function buildUserSideArticleForm($h1, $used_fields, $cat_id) {
-		if ( Yii::app ()->user->hasFlash ( 'adding_article' ) ) {
-			$msg = Yii::app ()->user->getFlash ( 'adding_article' );
+		if ( Yii::$app->user->hasFlash ( 'adding_article' ) ) {
+			$msg = Yii::$app->user->getFlash ( 'adding_article' );
 			$return = $this->renderPartial ( 'adding_form_success', array ('h1' => $h1, 'msg' => 'Added succsessull' ), true );
 			return $return;
 		}
@@ -359,7 +369,7 @@ class SiteController extends ControllerC {
 		$model->ca_active = 0;
 		$model->ca_alias = 'comment' . uniqid ();
 		$lang_forms = array ();
-		foreach ( Yii::app ()->params['languages'] as $key => $name ) {
+		foreach ( Yii::$app->params['languages'] as $key => $name ) {
 			$lang_forms[$key] = new ContentArticlesLang ();
 			$lang_forms[$key]->cal_lang = $key;
 			$lang_forms[$key]->cal_title = 'Запись пользователя сайта';
@@ -388,7 +398,7 @@ class SiteController extends ControllerC {
 				$model->lang_data = $lang_forms;
 				if ( $model->saveWithRelated ( 'lang_data' ) ) {
 					$this->logg_system_journal ( $model, $_POST['user_name'], $action_type );
-					Yii::app ()->user->setFlash ( 'adding_article', 'added_element' );
+					Yii::$app->user->setFlash ( 'adding_article', 'added_element' );
 					$this->redirect ( $_SERVER['REQUEST_URI'], true, 301 );
 				}
 			} else {

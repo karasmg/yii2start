@@ -1,11 +1,13 @@
 <?php
 
+
+use yii\web\IdentityInterface;
 /**
  * UserIdentity represents the data needed to identity a user.
  * It contains the authentication method that checks if the provided
  * data can identity the user.
  */
-class UserIdentity extends CUserIdentity
+class UserIdentity implements IdentityInterface
 {
 	/**
 	 * Authenticates a user.
@@ -45,4 +47,17 @@ class UserIdentity extends CUserIdentity
         return !$this->errorCode;
 		
 	}
+
+	public function getisMenuDisabled() {
+		if ( $this->iid ) {
+			$state = Yii::app()->db->createCommand('SELECT state FROM zayavka WHERE iid='.$this->iid.' ORDER BY id DESC')->queryRow();
+		}
+
+		if ( empty($state) || $state['state'] < 1 || $state['state'] == 7) {
+			return true;
+		}
+		return false;
+	}
+
+
 }

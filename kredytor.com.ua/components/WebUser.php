@@ -1,5 +1,7 @@
 <?php
-class WebUser extends CWebUser {
+use yii\web\user;
+
+class WebUser extends User {
 	public $_order = array ();
 	public $_states = array ();
 

@@ -46,7 +46,7 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'yii\components\WebUser',
+            'identityClass' => 'app\components\WebUser',
             'enableAutoLogin' => false,
             'loginUrl'		=>'site/login',
             'returnUrl'		=>'site/index',

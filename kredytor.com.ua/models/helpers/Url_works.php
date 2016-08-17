@@ -1,10 +1,12 @@
 <?php
 
+namespace app\models\helpers;
+use yii\base\Model;
 /**
  * This is the model class helper for work with site urls.
  *
  */
-class Url_works extends CModel
+class Url_works extends Model
 {
 	public function attributeNames() {
 		return '';
